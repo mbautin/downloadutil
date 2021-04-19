@@ -4,6 +4,7 @@ from typing import Optional, Any
 class DownloadConfig:
     verbose: bool
     cache_dir_path: Optional[str]
+
     def __init__(
             self,
             verbose: bool = False,

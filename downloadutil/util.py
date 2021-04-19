@@ -88,19 +88,20 @@ def log_and_check_call(args: List[str], verbose: bool) -> None:
         raise ex
 
 
-def log_and_check_output(args: List[str], verbose: bool) -> str:
+def log_and_check_output(args: List[str], verbose: bool) -> bytes:
     args_as_str = cmd_args_to_str(args)
     if verbose:
         logging.info("Running command: %s", args_as_str)
     try:
-        return subprocess.check_output(args).decode('utf-8')
+        return subprocess.check_output(args)
     except subprocess.CalledProcessError as ex:
         logging.exception("Error when executing command: %s", args_as_str)
         raise ex
 
 
-def remove_ignoring_errors(path: str) -> str:
-    try:
-        os.remove(path)
-    except OSError as ex:
-        logging.exception(f"Ignoring an error while removing file {path}")
+def remove_ignoring_errors(path: str) -> None:
+    if os.path.exists(path):
+        try:
+            os.remove(path)
+        except OSError as ex:
+            logging.exception(f"Ignoring an error while removing file {path}")

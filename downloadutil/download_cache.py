@@ -9,8 +9,10 @@ from downloadutil.checksum_util import (
     SHA256_CHECKSUM_FILE_SUFFIX,
     get_sha256_file_path_or_url,
     validate_sha256sum,
-    compute_file_sha256
+    compute_file_sha256,
 )
+from downloadutil.util import remove_ignoring_errors
+
 from typing import Optional
 
 
@@ -42,9 +44,11 @@ class DownloadCache:
         return None
 
     def invalidate_for_url(self, url: str) -> None:
-        cached_path = find_cached_download_path(url)
-        cached_checksum_path = get_sha256_file_path_or_url(cached_path)
-
+        cached_path = self.find_cached_download_path(url)
+        if cached_path:
+            cached_checksum_path = get_sha256_file_path_or_url(cached_path)
+            remove_ignoring_errors(cached_path)
+            remove_ignoring_errors(cached_checksum_path)
 
     def save_to_cache(self, url: str, downloaded_path: str, expected_sha256: Optional[str]) -> None:
         self.ensure_cache_dir_exists()

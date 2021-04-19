@@ -78,7 +78,7 @@ class Downloader:
                             f"{actual_sha256} for cached file {cached_download_path}. "
                             "Re-downloading.")
                         os.remove(download_tmp_dest_path)
-                        self.cache.invalidate_for_url(url, expected_sha256)
+                        self.cache.invalidate_for_url(url)
                         expected_sha256 = None
 
             else:
@@ -91,7 +91,7 @@ class Downloader:
             checksum_file_contents = self.strategy.download_to_memory(
                 url=checksum_url,
                 max_num_bytes=MAX_CHECKSUM_FILE_SIZE_BYTES
-            )
+            ).decode('utf-8')
             expected_sha256 = parse_sha256_from_file(checksum_file_contents)
 
         if need_to_download:

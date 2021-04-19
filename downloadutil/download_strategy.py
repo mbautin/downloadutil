@@ -10,7 +10,7 @@ from typing import Optional, List
 
 
 class MaxDownloadSizeExceeded(IOError):
-    def __init__(url: str, max_num_bytes: int) -> None:
+    def __init__(self, url: str, max_num_bytes: int) -> None:
         super(IOError, self).__init__(
             f"When downloading URL {url}, maximum download size exceeded: {max_num_bytes}"
         )
@@ -23,7 +23,7 @@ class DownloadStrategy:
             self,
             url: str,
             dest_path: str,
-            max_num_bytes: Optional[int]):
+            max_num_bytes: Optional[int]) -> None:
         raise NotImplementedError()
 
     def download_to_memory(self, url: str, max_num_bytes: Optional[int]) -> bytes:
@@ -77,10 +77,3 @@ class CurlDownloadStrategy(DownloadStrategy):
         if max_num_bytes and len(result) > max_num_bytes:
             raise MaxDownloadSizeExceeded(url, max_num_bytes)
         return result
-
-
-def get_temporal_randomized_file_name_suffix() -> str:
-    return "%s-%s" % (
-        get_seconds_timestamp_for_file_name(),
-        get_random_suffix_for_file_name()
-    )
