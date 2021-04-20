@@ -12,7 +12,7 @@ if __name__ == '__main__':
 
     setup(
         name='downloadutil',
-        version='1.0.1',
+        version='1.0.2',
         url='https://github.com/yugabyte/downloadutil',
         author='Mikhail Bautin',
         author_email='mbautin@users.noreply.github.com',
