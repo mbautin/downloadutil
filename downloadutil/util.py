@@ -16,6 +16,8 @@ BUFFER_SIZE_BYTES = 128 * 1024
 # Some servers need this header in order to allow the download.
 REQUEST_HEADERS = {'user-agent': 'Mozilla'}
 
+ARCHIVE_EXTENSIONS = ['.tar.gz', '.zip']
+
 
 def download_file(url: str, dest_path: str) -> str:
     """
@@ -105,3 +107,22 @@ def remove_ignoring_errors(path: str) -> None:
             os.remove(path)
         except OSError as ex:
             logging.exception(f"Ignoring an error while removing file {path}")
+
+
+def add_optional_dash_and_suffix(prefix: str, suffix: str) -> str:
+    if prefix.endswith('-'):
+        return prefix + suffix
+
+    return f'{prefix}-{suffix}'
+
+
+def add_suffix_before_archive_extension(file_name: str, suffix: str) -> str:
+    for extension in ARCHIVE_EXTENSIONS:
+        if file_name.endswith(extension):
+            return add_optional_dash_and_suffix(file_name[:-len(extension)], suffix) + extension
+
+    return add_optional_dash_and_suffix(file_name, suffix)
+
+
+def append_random_tmp_suffix(path: str) -> str:
+    return '%s.%s' % (path, get_temporal_randomized_file_name_suffix())

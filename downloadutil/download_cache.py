@@ -11,7 +11,10 @@ from downloadutil.checksum_util import (
     validate_sha256sum,
     compute_file_sha256,
 )
-from downloadutil.util import remove_ignoring_errors
+from downloadutil.util import (
+    remove_ignoring_errors,
+    add_suffix_before_archive_extension,
+)
 
 from typing import Optional
 
@@ -32,9 +35,13 @@ class DownloadCache:
         pathlib.Path(self.cache_dir_path).mkdir(parents=True, exist_ok=True)
 
     def cached_path_for_url(self, url: str) -> str:
+        url_basename = os.path.basename(url)
         return os.path.join(
             self.cache_dir_path,
-            f"{os.path.basename(url)}-urlsha256={compute_string_sha256(url)}")
+            add_suffix_before_archive_extension(
+                url_basename,
+                f"urlsha256={compute_string_sha256(url)}"
+            ))
 
     def find_cached_download_path(self, url: str) -> Optional[str]:
         cached_path = self.cached_path_for_url(url)
@@ -50,7 +57,12 @@ class DownloadCache:
             remove_ignoring_errors(cached_path)
             remove_ignoring_errors(cached_checksum_path)
 
-    def save_to_cache(self, url: str, downloaded_path: str, expected_sha256: Optional[str]) -> None:
+    def save_to_cache(
+            self,
+            url: str,
+            downloaded_path: str,
+            expected_sha256: Optional[str],
+            move_file: bool) -> None:
         self.ensure_cache_dir_exists()
         cached_path = self.cached_path_for_url(url)
         if expected_sha256:
@@ -59,9 +71,17 @@ class DownloadCache:
             if self.config.verbose:
                 logging.info(f"Computing SHA256 checksum of {downloaded_path}")
             expected_sha256 = compute_file_sha256(downloaded_path)
-        if self.config.verbose:
-            logging.info(f"Copying downloaded file {downloaded_path} to cache at {cached_path}.")
-        shutil.copyfile(downloaded_path, cached_path)
+
+        if move_file:
+            if self.config.verbose:
+                logging.info(f"Moving file {downloaded_path} to cache at {cached_path}.")
+            os.rename(downloaded_path, cached_path)
+        else:
+            if self.config.verbose:
+                logging.info(
+                    f"Copying downloaded file {downloaded_path} to cache at {cached_path}.")
+            shutil.copyfile(downloaded_path, cached_path)
+
         cached_sha256_path = get_sha256_file_path_or_url(cached_path)
         if self.config.verbose:
             logging.info(

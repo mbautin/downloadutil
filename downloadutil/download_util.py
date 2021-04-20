@@ -33,11 +33,11 @@ def main() -> None:
         verbose=args.verbose,
         cache_dir_path=args.cache_dir)
     downloader = Downloader(config=config)
-    downloader.download_url(
+    result_path = downloader.download_url(
         args.url,
         verify_checksum=args.verify_checksum,
         download_parent_dir_path=args.dest_dir_parent)
-
+    logging.info(f"Downloaded: {result_path}")
 
 if __name__ == '__main__':
     main()
