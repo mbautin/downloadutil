@@ -74,12 +74,12 @@ class DownloadCache:
 
         if move_file:
             if self.config.verbose:
-                logging.info(f"Moving file {downloaded_path} to cache at {cached_path}.")
+                logging.info(f"Moving file {downloaded_path} to cache at {cached_path}")
             os.rename(downloaded_path, cached_path)
         else:
             if self.config.verbose:
                 logging.info(
-                    f"Copying downloaded file {downloaded_path} to cache at {cached_path}.")
+                    f"Copying downloaded file {downloaded_path} to cache at {cached_path}")
             shutil.copyfile(downloaded_path, cached_path)
 
         cached_sha256_path = get_sha256_file_path_or_url(cached_path)

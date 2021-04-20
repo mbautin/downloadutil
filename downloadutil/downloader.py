@@ -66,8 +66,6 @@ class Downloader:
                 f"Not sure where to download URL {url}.")
         download_tmp_dest_path = append_random_tmp_suffix(download_dest_path)
 
-        cached_download_path: Optional[str] = None
-        expected_sha256: Optional[str] = None
         if self.cache:
             cached_download_path = self.cache.find_cached_download_path(url)
             if cached_download_path:
@@ -78,7 +76,10 @@ class Downloader:
                 expected_sha256 = read_sha256_from_file(
                     get_sha256_file_path_or_url(cached_download_path))
 
+                if self.config.verbose:
+                    logging.info(f"Verifying the checksum of {cached_download_path}")
                 actual_sha256 = compute_file_sha256(cached_download_path)
+
                 if actual_sha256 == expected_sha256:
                     if use_only_cache_directory:
                         # Not copying the file to a user-specified directory. Just returning the
