@@ -16,7 +16,7 @@ BUFFER_SIZE_BYTES = 128 * 1024
 # Some servers need this header in order to allow the download.
 REQUEST_HEADERS = {'user-agent': 'Mozilla'}
 
-ARCHIVE_EXTENSIONS = ['.tar.gz', '.zip']
+ARCHIVE_EXTENSIONS = ['.tar.gz', '.tar.bz2', '.zip']
 
 
 def download_file(url: str, dest_path: str) -> str:
@@ -110,13 +110,45 @@ def remove_ignoring_errors(path: str) -> None:
 
 
 def add_optional_dash_and_suffix(prefix: str, suffix: str) -> str:
-    if prefix.endswith('-'):
+    """
+    Adds an optional dash (if the prefix does not already end with a dash) and the given suffix.
+    If the suffix or the prefix are empty, does not add any dashes.
+
+    >>> add_optional_dash_and_suffix('foo-', 'bar')
+    'foo-bar'
+    >>> add_optional_dash_and_suffix('foo', 'bar')
+    'foo-bar'
+    >>> add_optional_dash_and_suffix('foo', '-bar')
+    'foo-bar'
+    >>> add_optional_dash_and_suffix('foo-', '-bar')
+    'foo--bar'
+    >>> add_optional_dash_and_suffix('foo', '')
+    'foo'
+    >>> add_optional_dash_and_suffix('', 'foo')
+    'foo'
+    """
+    if suffix == '':
+        return prefix
+    if prefix == '':
+        return suffix
+    if prefix.endswith('-') or suffix.startswith('-'):
         return prefix + suffix
 
     return f'{prefix}-{suffix}'
 
 
 def add_suffix_before_archive_extension(file_name: str, suffix: str) -> str:
+    """
+    Adds a dash and the given suffix before the archive extension, such as .tar.gz. If the extension
+    is not one of the recognized archive extensions, the suffix is added at the very end.
+
+    >>> add_suffix_before_archive_extension('some/dir/foo.bar.tar.gz', 'mysuffix')
+    'some/dir/foo.bar-mysuffix.tar.gz'
+    >>> add_suffix_before_archive_extension('some/dir/myfile.zip', 'mysuffix')
+    'some/dir/myfile-mysuffix.zip'
+    >>> add_suffix_before_archive_extension('some/dir/myfile.tar.bz2', 'mysuffix')
+    'some/dir/myfile-mysuffix.tar.bz2'
+    """
     for extension in ARCHIVE_EXTENSIONS:
         if file_name.endswith(extension):
             return add_optional_dash_and_suffix(file_name[:-len(extension)], suffix) + extension

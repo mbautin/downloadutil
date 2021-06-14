@@ -19,6 +19,17 @@ from downloadutil.util import (
 from typing import Optional
 
 
+class CacheEntry:
+    url: str
+    sha256: str
+    content_file_name: str
+
+    def __init__(self, url: str, sha256: str, content_file_name: str) -> None:
+        self.url = url
+        self.sha256 = sha256
+        self.content_file_name = content_file_name
+
+
 class DownloadCache:
     config: DownloadConfig
     cache_dir_path: str

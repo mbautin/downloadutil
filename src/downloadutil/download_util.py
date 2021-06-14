@@ -1,5 +1,4 @@
-from downloadutil.downloader import Downloader
-from downloadutil.download_config import DownloadConfig
+from downloadutil import Downloader, DownloadConfig
 
 import argparse
 import logging

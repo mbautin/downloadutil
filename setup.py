@@ -17,7 +17,7 @@ if __name__ == '__main__':
         author='Mikhail Bautin',
         author_email='mbautin@users.noreply.github.com',
         description='Common utilities for downloading and extracting archives',
-        packages=find_packages(),
+        packages=find_packages(where='src'),
         install_requires=[],
         long_description=long_description,
         long_description_content_type='text/markdown',
@@ -27,11 +27,18 @@ if __name__ == '__main__':
             'dev': [
                 'pycodestyle',
                 'mypy',
-                'twine',
-                'codecheck'
+                'codecheck >= 1.0.7',
+                'pytype'
             ]
         },
         entry_points={
             'console_scripts': ['downloadutil=downloadutil.download_util:main'],
-        }
+        },
+        package_dir={"": "src"},
+        classifiers=[
+            "Programming Language :: Python :: 3",
+            "License :: OSI Approved :: Apache Software License",
+            "Operating System :: OS Independent",
+        ],
+        python_requires=">=3.6",
     )
