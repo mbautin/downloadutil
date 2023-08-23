@@ -1,3 +1,15 @@
+# Copyright (c) YugabyteDB, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+# in compliance with the License. You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under the License
+# is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+# or implied. See the License for the specific language governing permissions and limitations
+# under the License.
+
 import os
 import logging
 import shutil
@@ -60,13 +72,13 @@ class Downloader:
         if expected_sha256:
             validate_sha256sum(expected_sha256)
 
-        use_only_cache_directory: bool
+        download_directly_to_cache: bool
         if download_parent_dir_path:
-            use_only_cache_directory = False
+            download_directly_to_cache = False
             download_dest_path = os.path.join(download_parent_dir_path, os.path.basename(url))
         elif self.cache:
             # We will download directly to cache.
-            use_only_cache_directory = True
+            download_directly_to_cache = True
             download_dest_path = self.cache.cached_path_for_url(url)
         else:
             raise ValueError(
@@ -93,7 +105,7 @@ class Downloader:
                     actual_sha256 = compute_file_sha256(cached_download_path)
 
                     if actual_sha256 == expected_sha256:
-                        if use_only_cache_directory:
+                        if download_directly_to_cache:
                             # Not copying the file to a user-specified directory. Just returning the
                             # path in our cache.
                             return cached_download_path
@@ -156,19 +168,21 @@ class Downloader:
                 raise IOError(
                     f"Invalid checksum: {actual_sha256}, expected {expected_sha256} for file "
                     f"{download_tmp_dest_path} downloaded from {url}")
+            logging.info("Successfully verified the checksum of %s: %s",
+                         download_tmp_dest_path, actual_sha256)
 
         if self.cache:
             # In case we are downloading to the cache directly and not to a user-specified
-            # directory (as indicated by use_only_cache_directory), the temporary file should also
+            # directory (as indicated by download_directly_to_cache), the temporary file should also
             # be in the cache directory and we will just move the temporary file to the cached file
             # here.
             self.cache.save_to_cache(
                 url,
                 download_tmp_dest_path,
                 expected_sha256,
-                move_file=use_only_cache_directory)
+                move_file=download_directly_to_cache)
 
-        if not use_only_cache_directory:
+        if not download_directly_to_cache:
             # In case we are downloading to the user-specified directory, the temporary file will
             # be in the same directory and we just move it into place here.
             if self.config.verbose:

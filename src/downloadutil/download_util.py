@@ -1,3 +1,15 @@
+# Copyright (c) YugabyteDB, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+# in compliance with the License. You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under the License
+# is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+# or implied. See the License for the specific language governing permissions and limitations
+# under the License.
+
 from downloadutil import Downloader, DownloadConfig
 
 import argparse
@@ -18,7 +30,7 @@ def main() -> None:
     parser.add_argument(
         '--cache-dir',
         default=os.path.expanduser('~/.cache/downloads'),
-        help='Download cache directory on the local disk. Must have enough space.')
+        help='Download cache directory on the locally mounted disk. Must have enough space.')
     parser.add_argument(
         '--no-cache',
         help='Do not use a cache directory',

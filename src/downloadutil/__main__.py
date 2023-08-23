@@ -10,5 +10,8 @@
 # or implied. See the License for the specific language governing permissions and limitations
 # under the License.
 
-from downloadutil.downloader import Downloader
-from downloadutil.download_config import DownloadConfig
+from downloadutil import download_util
+
+
+if __name__ == '__main__':
+    download_util.main()
