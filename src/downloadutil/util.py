@@ -22,7 +22,7 @@ ARCHIVE_EXTENSIONS = ['.tar.gz', '.tar.bz2', '.zip']
 def download_file(url: str, dest_path: str) -> str:
     """
     Download a file to the given path and return its SHA256 sum. Note that this downloads directly
-    to the destination path, without usinga temporary file.
+    to the destination path, without using a temporary file.
     """
     try:
         with open(dest_path, 'wb') as dest_file:
@@ -41,19 +41,25 @@ def download_file(url: str, dest_path: str) -> str:
 
 
 def download_string(url: str, max_bytes: int) -> str:
+    """
+    Download the given URL as a string, up the the given number of bytes. If more bytes are
+    downloaded, raises an IOError.
+    """
     req = urllib.request.Request(url, headers=REQUEST_HEADERS)
     with urllib.request.urlopen(req) as remote_stream:
-        bytes_downloaded = 0
         max_bytes_left = max_bytes + 1
         result = bytearray()
         for byte_block in iter(
                 lambda: remote_stream.read(min(max_bytes_left, BUFFER_SIZE_BYTES)), b""):
             assert len(byte_block) <= max_bytes_left
+            max_bytes_left -= len(byte_block)
             result.extend(byte_block)
-            bytes_downloaded += len(byte_block)
-        if bytes_downloaded > max_bytes:
+            if max_bytes_left == 0:
+                break
+        if len(result) > max_bytes:
             raise IOError(
-                "The file at %s is too large (more than %d bytes)", url, max_bytes)
+                "The file at %s is too large (at least %d bytes, more than %d bytes)" % (
+                    url, len(result), max_bytes))
         return byte_block.decode('utf-8')
 
 

@@ -26,7 +26,7 @@ def main() -> None:
     parser.add_argument(
         '--verify-checksum',
         help='In addition to downloading the given URL, also download the SHA256 checksum file '
-             'from an URL with an appended .sha256 suffix, and verify the checksum.',
+             'from the URL obtained by appending an .sha256 suffix, and verifying the checksum.',
         action='store_true')
 
     parser.add_argument('--verbose', action='store_true', help='Verbose logging')

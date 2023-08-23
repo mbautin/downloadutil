@@ -44,7 +44,8 @@ class Downloader:
             expected_sha256: Optional[str] = None) -> str:
         """
         Downloads the given URL and returns the downloaded file path. If the file is found in cache
-        and the checksum stored in cache matches the file in cache, we will skip the download.
+        and the checksum stored in cache matches the file in cache, we will skip the download and
+        return the path to the file in cache.
 
         :param url: The URL to download.
         :param download_parent_dir_path: where to put the resulting file. This is allowed to be None
