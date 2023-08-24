@@ -19,6 +19,9 @@ VENV_PYTHON=$(VENV_NAME)/bin/python3
 
 venv: $(VENV_NAME)/bin/activate
 
+sdist: venv
+	$(VENV_PYTHON) setup.py sdist
+
 $(VENV_NAME)/bin/activate: setup.py
 	[[ -d "$(VENV_NAME)" ]] || python3 -m venv "$(VENV_NAME)"
 	$(VENV_PYTHON) -m pip install --upgrade pip wheel

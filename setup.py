@@ -37,10 +37,11 @@ if __name__ == '__main__':
             # Following advice in this answer: https://stackoverflow.com/a/28842733/220215
             # Install with: pip install -e '.[dev]'
             'dev': [
-                'pycodestyle',
-                'mypy',
                 'codecheck >= 1.0.7',
-                'pytype'
+                'mypy',
+                'pycodestyle',
+                'pytype',
+                'twine',
             ]
         },
         entry_points={

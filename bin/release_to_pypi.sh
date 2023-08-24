@@ -6,5 +6,5 @@ set -euo pipefail -x
 cd "${BASH_SOURCE[0]%/*}"/..
 
 rm -f dist/*
-python3 setup.py sdist
-python3 -m twine upload dist/*
+make sdist
+venv/bin/python3 -m twine upload dist/*
